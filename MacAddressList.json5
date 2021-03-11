@@ -1,0 +1,5 @@
+{
+  macAddressList: [
+    { userName:'ユーザー', pcName:'ユーザーのPC', macAddress:'08-2E-5F-87-7B-0E' },
+  ]
+}
