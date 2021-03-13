@@ -1,5 +1,6 @@
 {
   macAddressList: [
-    { userName:'ユーザー', pcName:'ユーザーのPC', macAddress:'08-2E-5F-87-7B-0E' },
+    // { userName:'User1', pcName:'PC1', macAddress:'NN-NN-NN-NN-NN-N1' },
+    // { userName:'User2', pcName:'PC2', macAddress:'NN:NN:NN:NN:NN:N2' },
   ]
 }
