@@ -8,8 +8,8 @@ LAN内で動かす前提であり、ルーター越えは考慮しない。
 ## Depencency
 
 - [Node.js](https://nodejs.org/en/) 任意のバージョン
-- [json5](https://www.npmjs.com/package/json5) v2.2.0 以上
-- [wake_on_lan](https://www.npmjs.com/package/wake_on_lan) v1.1.0以上
+- [json5](https://www.npmjs.com/package/json5) v2.2.0 以上（このリポジトリのnode_module配下に配置済み）
+- [wake_on_lan](https://www.npmjs.com/package/wake_on_lan) v1.1.0以上（このリポジトリのnode_module配下に配置済み）
 
 ## Setup
 
