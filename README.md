@@ -7,7 +7,7 @@ LAN内で動かす前提であり、ルーター越えは考慮しない。
 
 ## Depencency
 
-- Node.js 任意のバージョン
+- [Node.js](https://nodejs.org/en/) 任意のバージョン
 - [json5](https://www.npmjs.com/package/json5) v2.2.0 以上
 - [wake_on_lan](https://www.npmjs.com/package/wake_on_lan) v1.1.0以上
 
@@ -17,7 +17,7 @@ LAN内で動かす前提であり、ルーター越えは考慮しない。
 
 ## Usage
 
-まず、MacAddressList.json5を編集し、以下のフォーマットでmacAddressListへ情報を記載する。MACアドレスの区切り文字は「-」、または「:」のどちらでもよい。
+まず、MacAddressList.json5を編集し、以下のフォーマットでmacAddressListへ情報を記載する。MACアドレスの区切り文字は「-」、または「:」のどちらでもよい（区切り文字なしでもよい。）
 
 ```javascript
 {
@@ -44,7 +44,7 @@ http://IPアドレス:3000
 
 ## License
 
-- WOLviaWebpage, [WTFPL-2.0](http://www.wtfpl.net/)
+- [WOLviaWebpage](https://github.com/DNV825/WOLviaWebpage), [WTFPL-2.0](http://www.wtfpl.net/)
 
 ```text
         DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
@@ -67,7 +67,7 @@ http://IPアドレス:3000
 
 ## Authors
 
-- WOLviaWebpage, DNV825
+- [WOLviaWebpage](https://github.com/DNV825/WOLviaWebpage), DNV825
 - [json5](https://www.npmjs.com/package/json5), Assem Kishore / Michael Bolin / Douglas Crockford / Max Nanasy / Andrew Eisenberg / Jordan Tucker
 - [wake_on_lan](https://www.npmjs.com/package/wake_on_lan), Jann Horn @thejh / mh-cbon @mh-cbon
 

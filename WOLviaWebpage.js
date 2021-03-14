@@ -1,7 +1,7 @@
 /**
  * @fileoverview WOLを送信可能なWebページを表示するhttpサーバー機能を実現する。
- * @description ポート番号3000でhttpサーバー機能を提供し、MacAccressList.json5から読み込んだMACアドレス宛てに
- * WOLを送信するボタンを設置したWebページを表示する。
+ * @description ポート番号3000でhttpサーバー機能を提供し、MacAccressList.json5から読み込んだ内容の
+ *     MACアドレス宛てにWOLを送信するボタンを設置したWebページを表示する。
  * @todo MacAddressList.json5は適宜更新すること。
  * @see なし
  * @example なし
@@ -15,30 +15,46 @@ const json5 = require('json5');
 const wol = require('wake_on_lan');
 const os = require('os');
 
+/**
+ * 現在日時を文字列で取得する。
+ *     フォーマットは yyyy/mm/dd hh:MM:ss とする。
+ * @returns {String} 現在の日時を表す、フォーマット「yyyy/mm/dd hh:MM:ss」の文字列。
+ */
 const getCurrentDateString = () => {
   const d = new Date();
   return `${d.getFullYear()}/${('00' + (d.getMonth() + 1)).slice(-2)}/${('00' + d.getDate()).slice(-2)} ${('00' + d.getHours()).slice(-2)}:${('00' + d.getMinutes()).slice(-2)}:${('00' + d.getSeconds()).slice(-2)}`;
 }
 
+/**
+ * IPv4アドレスとサブネットマスクからブロードキャストアドレスを算出する。
+ * @param {String} ipv4Address ブロードキャストアドレス確認対象のIPv4アドレス。
+ * @param {String} subnetMask ブロードキャストアドレス確認対象のIPv4アドレスのサブネットマスク。
+ * @returns {String} IPv4ブロードキャストアドレスを表す文字列。
+ */
 const getBroadcastIPv4Address = (ipv4Address, subnetMask) => {
   const ipv4AddressArray = ipv4Address.split('.'); // 例：192.168.11.1 を[192, 168, 11, 1]の配列にする。
   const subnetMaskArray = subnetMask.split('.');   // 例：255.255.255.0を[255, 255, 255, 0]の配列にする。
-  const privateIPv4AddressArray = [
+  const ipv4NetworkAddressArray = [                // IPv4アドレスのネットワークアドレスを算出する。
     ipv4AddressArray[0] & subnetMaskArray[0],
     ipv4AddressArray[1] & subnetMaskArray[1],
     ipv4AddressArray[2] & subnetMaskArray[2],
     ipv4AddressArray[3] & subnetMaskArray[3],
   ];
-  const broadcastIPv4AddressArray = [
-    privateIPv4AddressArray[0] | (~subnetMaskArray[0] & 255),
-    privateIPv4AddressArray[1] | (~subnetMaskArray[1] & 255),
-    privateIPv4AddressArray[2] | (~subnetMaskArray[2] & 255),
-    privateIPv4AddressArray[3] | (~subnetMaskArray[3] & 255),
+  const ipv4BroadcastAddressArray = [              // IPv4アドレスのブロードキャストアドレスを算出する。
+    ipv4NetworkAddressArray[0] | (~subnetMaskArray[0] & 255),
+    ipv4NetworkAddressArray[1] | (~subnetMaskArray[1] & 255),
+    ipv4NetworkAddressArray[2] | (~subnetMaskArray[2] & 255),
+    ipv4NetworkAddressArray[3] | (~subnetMaskArray[3] & 255),
   ];
 
-  return broadcastIPv4AddressArray.join('.');
+  return ipv4BroadcastAddressArray.join('.');
 }
 
+/**
+ * WOLを発行するWebページのテンプレート。
+ *     "<% REPLACE %>"はMacAddressList.json5の内容に置換する。
+ * @type {String}
+ */
 const htmlTemplate = `<!doctype html>
 <html>
 <head>
@@ -64,6 +80,11 @@ const htmlTemplate = `<!doctype html>
 </body>
 </html>`;
 
+/**
+ * 表示するHTMLソースを生成する。
+ * @param {Array} statusList WOLを送信したステータスのリスト。
+ * @returns {String} 表示するHTMLソース。
+ */
 const createHtmlData = (statusList = []) => {
   // WOL送信対象を表示するテーブルの行を生成する。
   let no = 0;          // 「No」列の値。
@@ -71,8 +92,8 @@ const createHtmlData = (statusList = []) => {
   let pcName = '';     // 「PC名」列の値。
   let macAddress = ''; // 「MACアドレス」列の値。
   let status = '';     // 「送信ステータス」列の値。
-  let trData = '';     //  上記の値でtr列を保持する一次変数。
-  let data = '';       //  ルートアドレスに表示するhtmlソースを保持する一次変数。htmlTemplateとtrDataでソースを生成する。
+  let trData = '';     //  上記の「No」列～「送信ステータス」列の値でtr列を生成する変数。
+  let data = '';       //  ルートアドレスに表示するhtmlソースを保持する変数。htmlTemplateとtrDataでソースを生成する。
 
   // 指定フォルダ内に「MacAddressList.json5」が存在する場合は内容を取得する。
   // 取得できた場合はパースし、存在しない場合は例外が発生する。
@@ -91,7 +112,7 @@ const createHtmlData = (statusList = []) => {
 
     data = htmlTemplate.replace('<% REPLACE %>', trData);
   } catch (e) {
-    data = 'MacAddressList.json5が存在しません。';
+    data = '\n      <tr><td colspan="6">MacAddressList.json5が存在しません。</td></tr>';
     console.log(`${e}`);
   }
 
@@ -112,16 +133,18 @@ const server = http.createServer(
         if (request.method === 'POST') {
             let postData = '';
 
+            // データ受信が完全に完了するまで受信を続ける。
             request.on('data', (data) => {
               postData += data;
             });
 
+            // データ受信が完了した後にWOLの発行とページ更新を行う。
             request.on('end', () => {
               const parsedPostData = qs.parse(postData);
               const dataIndex = parsedPostData.action - 1; // actionには「No」列の値が入っているので、インデックスを指すために-1する。
-              const targetMacAddresses = (Array.isArray(parsedPostData.targetmacaddress) == true) ? parsedPostData.targetmacaddress: parsedPostData.targetmacaddress.split(',');
+              const targetMacAddresses = (Array.isArray(parsedPostData.targetmacaddress) == true) ? parsedPostData.targetmacaddress: parsedPostData.targetmacaddress.split(','); // 指定されたMACアドレスを配列化するため、絶対にありえない"."でsplitする。
               const targetMacAddress = targetMacAddresses[dataIndex];
-              const statuses = (Array.isArray(parsedPostData.status) == true) ? parsedPostData.status: parsedPostData.status.split(',') ;
+              const statuses = (Array.isArray(parsedPostData.status) == true) ? parsedPostData.status: parsedPostData.status.split(',') ; // もともとページに書かれていたステータスを維持しつつ配列化するため、絶対にありえない"."でsplitする。
               const broadcastIPv4Addresses = [];
 
               // ブロードキャストIPv4アドレスを生成する。
@@ -134,7 +157,7 @@ const server = http.createServer(
                 });
               });
 
-              // https://www.npmjs.com/package/wake_on_lan の《Windows Notes》より、
+              // https://www.npmjs.com/package/wake_on_lan#windows-notes より、
               // Windowsの場合はwakeメソッドへIPv4ブロードキャストアドレスを指定する。
               if (os.platform() === 'win32') {
                 for(value of broadcastIPv4Addresses) {
