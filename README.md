@@ -1,6 +1,6 @@
 # WOLviaWebpage
 
-WOLを発行するWebページを以下のように表示する。
+Wake on Lanを実行するWebページを以下のように表示する。
 LAN内で動かす前提であり、ルーター越えは考慮しない。
 
 ![Webページの表示イメージ](./README-pageimage.png)
