@@ -5,7 +5,7 @@ LAN内で動かす前提であり、ルーター越えは考慮しない。
 
 ![Webページの表示イメージ](./README-pageimage.png)
 
-## Depencency
+## Dependency
 
 - [Node.js](https://nodejs.org/en/) 任意のバージョン
 - [json5](https://www.npmjs.com/package/json5) v2.2.0 以上（このリポジトリのnode_module配下に配置済み）
