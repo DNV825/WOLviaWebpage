@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "json5": "^2.2.1",
+    "wake_on_lan": "^1.0.0"
+  }
+}
