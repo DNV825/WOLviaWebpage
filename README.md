@@ -77,3 +77,4 @@ http://IPアドレス:3000
 1. taikiken, node.js local IP アドレスを取得したい, イナヅマTVログ, 2015/04/16, <http://www.inazumatv.com/contents/archives/9885>
 1. からあげ (id:karaage) , READMEの良さそうな書き方・テンプレート【GitHub/Bitbucket】, からあげ, 2018/01/19, <https://karaage.hatenadiary.jp/entry/2018/01/19/073000>
 1. matiassingers, Awesome README, github.com, 2020/02/28, <https://github.com/matiassingers/awesome-readme>
+1. @sugurutakahashi12345, package.json に記載されているパッケージのバージョンアップ方法 【 npm-check-updates, outdated 】, Qiita, 2021/02/22, <https://qiita.com/sugurutakahashi12345/items/df736ddaf65c244e1b4f>
